@@ -39,6 +39,10 @@
     qSource: $("q-source"),
     qTitle: $("q-title"),
     qPrompt: $("q-prompt"),
+    qInput: $("q-input"),
+    inputBox: $("input-box"),
+    qOutput: $("q-output"),
+    outputBox: $("output-box"),
     qHint: $("q-hint"),
     hintBox: $("hint-box"),
     solBox: $("sol-box"),
@@ -193,6 +197,8 @@
         " · " +
         state.diff +
         "</strong> yet. Add a note in Obsidian and re-run <code>build_questions.py</code>, or try another combo.</p>";
+      el.inputBox.hidden = true;
+      el.outputBox.hidden = true;
       el.hintBox.hidden = true;
       el.solBox.hidden = true;
       el.qNote.hidden = true;
@@ -205,6 +211,21 @@
     el.qDiff.setAttribute("data-d", q.difficulty);
     el.qSource.textContent = q.source || "";
     el.qPrompt.innerHTML = md(q.prompt);
+
+    if (q.input) {
+      el.qInput.textContent = q.input;
+      el.inputBox.hidden = false;
+    } else {
+      el.inputBox.hidden = true;
+    }
+
+    if (q.output) {
+      el.qOutput.textContent = q.output;
+      el.outputBox.hidden = false;
+      el.outputBox.open = false;
+    } else {
+      el.outputBox.hidden = true;
+    }
 
     if (q.hint) {
       el.qHint.innerHTML = md(q.hint);

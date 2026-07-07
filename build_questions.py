@@ -138,6 +138,23 @@ def extract_hint(body: str) -> str:
     return CODE_FENCE.sub("", hint).strip()
 
 
+def extract_block(body: str, headings: list[str]) -> str:
+    """First matching section's fenced code (preferred) or cleaned prose.
+
+    Used for the optional `## Input Schema` / `## Expected Output` sections.
+    Only reads sections that explicitly exist — never parsed from the prompt.
+    """
+    for h in headings:
+        raw = section(body, h)
+        if not raw:
+            continue
+        code = CODE_FENCE.search(raw)
+        if code:
+            return code.group(1).rstrip("\n")
+        return clean_quote(raw)
+    return ""
+
+
 def obsidian_uri(rel_path: Path) -> str:
     file_arg = quote(f"DE-Interview-Prep/{rel_path.as_posix()}", safe="")
     return f"obsidian://open?vault={quote(VAULT_NAME)}&file={file_arg}"
@@ -167,6 +184,12 @@ def build(vault: Path) -> list[dict]:
                     "source": fm.get("source", ""),
                     "solved": "status/solid" in tags,
                     "prompt": question,
+                    "input": extract_block(
+                        body, ["Input Schema", "Input", "Setup"]
+                    ),
+                    "output": extract_block(
+                        body, ["Expected Output", "Sample Output", "Output"]
+                    ),
                     "hint": extract_hint(body),
                     "solution": extract_solution(body),
                     "note": obsidian_uri(md.relative_to(vault)),
