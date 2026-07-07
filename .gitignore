@@ -1,0 +1,16 @@
+# Real prep content generated from the private Obsidian vault — never publish
+data/questions.generated.js
+
+# Local working notes (progress, absolute paths, vault details)
+CLAUDE.local.md
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+.venv/

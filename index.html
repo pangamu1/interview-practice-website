@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interview Bench — coding interview practice</title>
+
+    <!-- Type: Space Grotesk (UI), Inter (prose), JetBrains Mono (code + timer) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- CodeMirror for the IDE-like editor -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css"
+    />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- ===================== COMMAND BAR ===================== -->
+    <header class="bar">
+      <div class="bar__brand">
+        <span class="brand__mark" aria-hidden="true"></span>
+        <span class="brand__name">Interview Bench</span>
+      </div>
+
+      <div class="bar__controls">
+        <div
+          class="seg"
+          id="lang-seg"
+          role="tablist"
+          aria-label="Language"
+        >
+          <button class="seg__btn is-active" data-lang="sql">SQL</button>
+          <button class="seg__btn" data-lang="pyspark">PySpark</button>
+          <button class="seg__btn" data-lang="python">Python</button>
+        </div>
+
+        <div class="seg seg--diff" id="diff-seg" aria-label="Difficulty">
+          <button class="seg__btn is-active" data-diff="easy">Easy</button>
+          <button class="seg__btn" data-diff="medium">Medium</button>
+          <button class="seg__btn" data-diff="hard">Hard</button>
+        </div>
+      </div>
+
+      <!-- Signature element: the focus meter -->
+      <div class="timer" id="timer">
+        <div class="timer__row">
+          <button
+            class="timer__adj"
+            id="minus"
+            title="−5 min"
+            aria-label="Subtract 5 minutes"
+          >
+            −5
+          </button>
+          <time class="timer__clock" id="clock">15:00</time>
+          <button
+            class="timer__adj"
+            id="plus"
+            title="+5 min"
+            aria-label="Add 5 minutes"
+          >
+            +5
+          </button>
+          <div class="timer__actions">
+            <button class="btn btn--primary" id="startpause">Start</button>
+            <button class="btn btn--ghost" id="reset" title="Reset timer">
+              Reset
+            </button>
+          </div>
+        </div>
+        <div class="timer__rail" aria-hidden="true">
+          <span class="timer__fill" id="fill"></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===================== WORKSPACE ===================== -->
+    <main class="work">
+      <!-- LEFT 30% — question -->
+      <section class="panel panel--q" aria-label="Question">
+        <div class="q__head">
+          <span class="badge" id="q-diff">Easy</span>
+          <span class="q__source" id="q-source"></span>
+          <button class="q__nav" id="next-q" title="Load another question">
+            Shuffle ↻
+          </button>
+        </div>
+
+        <h1 class="q__title" id="q-title">Loading…</h1>
+
+        <div class="q__scroll">
+          <div class="q__prompt" id="q-prompt"></div>
+
+          <details class="disclose" id="hint-box">
+            <summary>Show hint</summary>
+            <div class="disclose__body" id="q-hint"></div>
+          </details>
+
+          <details class="disclose disclose--spoiler" id="sol-box">
+            <summary>Reveal reference solution</summary>
+            <div class="disclose__body">
+              <pre><code id="q-solution"></code></pre>
+            </div>
+          </details>
+
+          <a class="q__vault" id="q-note" href="#" hidden>
+            Open note in Obsidian ↗
+          </a>
+        </div>
+      </section>
+
+      <!-- RIGHT 70% — editor -->
+      <section class="panel panel--ide" aria-label="Editor">
+        <div class="ide__chrome">
+          <div class="ide__tab">
+            <span class="ide__dot" aria-hidden="true"></span>
+            <span id="ide-filename">solution.sql</span>
+          </div>
+          <div class="ide__tools">
+            <button class="btn btn--ghost" id="reset-code" title="Restore starter code">
+              Reset code
+            </button>
+            <button class="btn btn--run" id="run">Run ▸</button>
+          </div>
+        </div>
+
+        <div class="ide__editor">
+          <textarea id="code"></textarea>
+        </div>
+
+        <div class="console" id="console" data-empty="true">
+          <div class="console__head">
+            <span>Console</span>
+            <button class="console__clear" id="clear-console">Clear</button>
+          </div>
+          <pre class="console__out" id="console-out"></pre>
+        </div>
+      </section>
+    </main>
+
+    <!-- CodeMirror core + modes (loaded before app.js) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/sql/sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
+
+    <!-- Question bank: sample first, then the vault-generated bank overrides it -->
+    <script src="data/questions.sample.js"></script>
+    <script src="data/questions.generated.js" onerror="void 0"></script>
+
+    <script src="app.js"></script>
+  </body>
+</html>
