@@ -40,6 +40,7 @@
     qTitle: $("q-title"),
     qPrompt: $("q-prompt"),
     qInput: $("q-input"),
+    ioLabel: $("io-label"),
     inputBox: $("input-box"),
     qOutput: $("q-output"),
     outputBox: $("output-box"),
@@ -213,6 +214,7 @@
     el.qPrompt.innerHTML = md(q.prompt);
 
     if (q.input) {
+      el.ioLabel.textContent = q.lang === "python" ? "Given" : "Input schema";
       el.qInput.textContent = q.input;
       el.inputBox.hidden = false;
     } else {
